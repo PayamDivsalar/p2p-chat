@@ -1,0 +1,13 @@
+{
+  "name": "peer-node",
+  "projectType": "application",
+  "sourceRoot": "apps/peer-node/src",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "python apps/peer-node/src/main.py"
+      }
+    }
+  }
+}

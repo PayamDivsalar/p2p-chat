@@ -1,0 +1,14 @@
+{
+  "name": "stun-server",
+  "projectType": "application",
+  "sourceRoot": "apps/stun-server/src",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd apps/stun-server && python -m src.main",
+        "cwd": "."
+      }
+    }
+  }
+}
