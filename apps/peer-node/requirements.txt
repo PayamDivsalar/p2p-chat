@@ -1,1 +1,10 @@
-# Add TCP client/server dependencies later if needed
+# HTTP client for STUN server communication
+requests==2.32.3
+
+# Configuration management
+pydantic==2.9.2
+pydantic-settings==2.5.2
+python-dotenv==1.0.1
+
+# Terminal UI (for better CLI experience)
+rich==13.9.4
