@@ -1,0 +1,27 @@
+{
+  "name": "p2p-chat",
+  "version": "1.0.0",
+  "description": "P2P chat system implementation using HTTP and TCP",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "stun:serve": "nx run stun-server:serve",
+    "peer:serve": "nx run peer-node:serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PayamDivsalar/p2p-chat.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/PayamDivsalar/p2p-chat/issues"
+  },
+  "homepage": "https://github.com/PayamDivsalar/p2p-chat#readme",
+  "devDependencies": {
+    "nx": "22.4.5"
+  },
+  "nx": {}
+}

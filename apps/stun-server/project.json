@@ -1,0 +1,13 @@
+{
+  "name": "stun-server",
+  "projectType": "application",
+  "sourceRoot": "apps/stun-server/src",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "python apps/stun-server/src/main.py"
+      }
+    }
+  }
+}
