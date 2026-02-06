@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # Redis Database
   redis:
     image: redis:7-alpine
     container_name: p2p-chat-redis
@@ -15,6 +16,84 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
+    networks:
+      - p2p-network
+
+  # STUN Server
+  stun-server:
+    build:
+      context: ./apps/stun-server
+      dockerfile: Dockerfile
+    container_name: p2p-stun-server
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - REDIS_PASSWORD=
+      - REDIS_DECODE_RESPONSES=true
+      - REDIS_PEER_PREFIX=peer:
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - p2p-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Peer Node 1 (Example)
+  peer-node-1:
+    build:
+      context: ./apps/peer-node
+      dockerfile: Dockerfile
+    container_name: p2p-peer-node-1
+    ports:
+      - "9000:9000"
+    environment:
+      - PEER_USERNAME=user1
+      - PEER_IP=0.0.0.0
+      - PEER_PORT=9000
+      - STUN_SERVER_URL=http://stun-server:8000
+    depends_on:
+      stun-server:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - p2p-network
+    stdin_open: true
+    tty: true
+
+  # Peer Node 2 (Example)
+  peer-node-2:
+    build:
+      context: ./apps/peer-node
+      dockerfile: Dockerfile
+    container_name: p2p-peer-node-2
+    ports:
+      - "9001:9001"
+    environment:
+      - PEER_USERNAME=user2
+      - PEER_IP=0.0.0.0
+      - PEER_PORT=9001
+      - STUN_SERVER_URL=http://stun-server:8000
+    depends_on:
+      stun-server:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - p2p-network
+    stdin_open: true
+    tty: true
+
+networks:
+  p2p-network:
+    driver: bridge
 
 volumes:
   redis_data:

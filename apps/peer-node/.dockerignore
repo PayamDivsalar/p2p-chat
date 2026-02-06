@@ -1,0 +1,41 @@
+# Ignore Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.local
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Downloads directory (exclude from image)
+downloads/
+*.pdf
+*.docx
+*.zip
+
+# Distribution
+dist/
+build/
+*.egg-info/
+
+# Documentation
+README.md

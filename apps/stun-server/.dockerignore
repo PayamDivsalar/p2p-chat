@@ -1,0 +1,44 @@
+# Ignore Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.local
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+test_*.py
+*_test.py
+tests/
+
+# Distribution
+dist/
+build/
+*.egg-info/
+
+# Downloads (for peer-node)
+downloads/
+
+# Redis data
+*.rdb
+dump.rdb
