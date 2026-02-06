@@ -1,76 +1,136 @@
 # p2p-chat
 
 P2P chat system implementation with two services:
-1. **STUN Server**: Peer address management server (HTTP) ✅ Implemented
+1. **STUN Server**: Peer address management server (HTTP + Redis) ✅ Fully Implemented
 2. **Peer Node**: Direct TCP communication peer ⏳ In Development
 
 ## Project Structure
 ```
 apps/
-  stun-server/           ✅ Fully Implemented
+  stun-server/                   ✅ Production-Ready Architecture
     src/
-      main.py           # HTTP server with FastAPI
-    requirements.txt
-    README.md           # Complete documentation
-    test_api.py         # API tests
-  peer-node/            ⏳ Next
+      api/                        # API Layer
+        endpoints/
+          peers.py                # Peer management endpoints  
+          health.py               # Health check endpoints
+        dependencies.py           # FastAPI DI
+      core/                       # Core functionality
+        config.py                 # Configuration management
+        redis_client.py           # Redis connection manager
+      models/                     # Data models
+        peer.py                   # Pydantic models
+      services/                   # Business logic
+        peer_service.py           # Peer operations
+      main.py                     # Application entry point
+    .env                          # Environment configuration
+    .env.example                  # Example configuration
+    requirements.txt              # Python dependencies
+    project.json                  # Nx configuration
+    README.md                     # Complete documentation
+    test_api.py                   # API tests
+    
+  peer-node/                      ⏳ Next Phase
     src/
       main.py
     requirements.txt
-libs/
+    
+docker-compose.yml                # Redis container
+.gitignore
+package.json
+nx.json
+README.md                         # This file
 ```
 
-## Installation and Setup
+## Quick Start
 
-### Install Python Dependencies (STUN Server)
+### Prerequisites
+- Python 3.10+
+- Docker & Docker Compose (for Redis)
+- Node.js (for Nx scripts)
+
+### 1. Start Redis
+```bash
+docker-compose up -d
+```
+
+### 2. Install STUN Server Dependencies
 ```bash
 pip install -r apps/stun-server/requirements.txt
 ```
 
-### Run Services
-
-#### STUN Server
+### 3. Run STUN Server
 ```bash
 npm run stun:serve
-# or
-python apps/stun-server/src/main.py
 ```
 
-Server runs on `http://localhost:8000`.
+Server runs on `http://localhost:8000`
 
-#### Test APIs
+### 4. Test APIs
 ```bash
 python apps/stun-server/test_api.py
 ```
 
-#### Interactive API Documentation
+### 5. View API Documentation
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
 
-### Peer Node (In Development)
-```bash
-npm run peer:serve
-```
+## STUN Server Architecture
+
+### Clean Architecture Implementation
+
+✅ **Separation of Concerns**
+- API Layer: HTTP handling, validation
+- Service Layer: Business logic
+- Core Layer: Infrastructure (Redis, config)
+- Models: Data structures
+
+✅ **Design Patterns**
+- Dependency Injection (FastAPI)
+- Repository Pattern (PeerService)
+- Singleton (RedisClient)
+- Settings management (Pydantic Settings)
+
+✅ **Redis-Only Storage**
+- Persistent data storage
+- Production-ready
+- No in-memory fallback
+- Docker Compose integration
+
+### API Endpoints
+
+All endpoints under `/api/v1/` prefix:
+
+- `POST /api/v1/register` - Register new peer
+- `GET /api/v1/peers` - Get all peers list  
+- `GET /api/v1/peerinfo?username=alice` - Get peer info
+- `DELETE /api/v1/unregister/{username}` - Remove peer
+- `GET /health` - Health check + Redis status
+- `GET /` - Server information
 
 ## Implementation Roadmap (3 Phases)
 
-### ✅ Phase 1: STUN Server (Completed)
-- [x] HTTP server implementation with FastAPI
-- [x] Peer registration endpoint (POST /register)
-- [x] Peers list endpoint (GET /peers)
-- [x] Peer info endpoint (GET /peerinfo)
-- [x] In-memory storage
-- [x] Data validation (Pydantic)
-- [x] Error handling and proper HTTP status codes
-- [x] Logging
-- [x] API documentation
-- [x] Automated tests
+### ✅ Phase 1: STUN Server (COMPLETED)
+- [x] Clean architecture implementation
+- [x] API layer with proper endpoints
+- [x] Service layer with business logic
+- [x] Redis integration (exclusive storage)
+- [x] Configuration management with .env
+- [x] Docker Compose for Redis
+- [x] Dependency injection pattern
+- [x] Comprehensive error handling
+- [x] Structured logging
+- [x] Type hints throughout
+- [x] API documentation (Swagger/ReDoc)
+- [x] Health check with Redis status
+- [x] Automated tests updated
 
-**Bonus Features Implemented:**
-- ✨ Peer removal endpoint (DELETE /unregister)
-- ✨ Health check endpoint (GET /health)
-- ✨ Interactive Swagger UI
-- ✨ Complete test script
+**Architecture Highlights:**
+- ✨ Professional folder structure
+- ✨ Separation of concerns (API/Service/Core/Models)
+- ✨ FastAPI dependency injection
+- ✨ Pydantic Settings for configuration
+- ✨ Redis client with connection management
+- ✨ Comprehensive documentation
 
 ### ⏳ Phase 2: Peer Node Implementation
 - [ ] Register with STUN server via HTTP
@@ -86,73 +146,132 @@ npm run peer:serve
 - [ ] [Bonus] File transfer
 - [ ] [Bonus] Graphical interface
 
-## Current STUN Server Features
+## Configuration
 
-✅ **Peer Registration**: POST /register
-- Unique username validation (letters/numbers/_/- only)
-- IP validation
-- Port validation (1024-65535)
-- 409 error for duplicate username
+### Environment Variables (.env)
 
-✅ **Peers List**: GET /peers
-- Total peer count
-- Username array
+```env
+# Application
+APP_NAME=P2P Chat STUN Server
+APP_VERSION=1.0.0
+DEBUG=false
 
-✅ **Peer Info**: GET /peerinfo?username=xxx
-- Peer IP and port
-- 404 error for non-existent peer
+# Server
+HOST=0.0.0.0
+PORT=8000
 
-✅ **Peer Removal**: DELETE /unregister/{username}
-- Remove from memory
-- 404 error for non-existent peer
+# Redis (Required)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_PASSWORD=
+REDIS_DECODE_RESPONSES=true
+REDIS_PEER_PREFIX=peer:
+```
 
-✅ **Health Check**: GET /health
-- Server status
-- Active peers count
+### Docker Compose
+
+Redis container configured in `docker-compose.yml`:
+- Image: redis:7-alpine
+- Port: 6379
+- Persistent volume: redis_data
+- Health checks enabled
+- Auto-restart
 
 ## Usage Example
 
 ```python
 import requests
 
-# Register
-requests.post('http://localhost:8000/register', json={
+BASE_URL = "http://localhost:8000/api/v1"
+
+# Register peer
+requests.post(f"{BASE_URL}/register", json={
     'username': 'alice',
     'ip': '192.168.1.10',
     'port': 5001
 })
 
-# Get list
-peers = requests.get('http://localhost:8000/peers').json()
+# Get all peers
+peers = requests.get(f"{BASE_URL}/peers").json()
 print(peers)  # {"count": 1, "peers": ["alice"]}
 
-# Get info
-info = requests.get('http://localhost:8000/peerinfo?username=alice').json()
+# Get peer info
+info = requests.get(f"{BASE_URL}/peerinfo?username=alice").json()
 print(info)  # {"username": "alice", "ip": "192.168.1.10", "port": 5001}
+
+# Unregister
+requests.delete(f"{BASE_URL}/unregister/alice")
 ```
 
-## Quick Test
+## Development Commands
 
 ```bash
-# Run server
+# Start Redis
+docker-compose up -d
+
+# Stop Redis
+docker-compose down
+
+# View Redis logs
+docker-compose logs -f redis
+
+# Run STUN server
 npm run stun:serve
 
-# In another terminal - run tests
+# Run tests
 python apps/stun-server/test_api.py
+
+# Install dependencies
+pip install -r apps/stun-server/requirements.txt
 ```
 
-## Future Enhancements
+## Technical Stack
 
 ### STUN Server
-- 🔲 Redis support
-- 🔲 Authentication
-- 🔲 Heartbeat mechanism (check peer online status)
+- **Framework**: FastAPI 0.115
+- **Server**: Uvicorn 0.32
+- **Validation**: Pydantic 2.9
+- **Storage**: Redis 5.0.8
+- **Configuration**: Pydantic Settings 2.5
+- **Environment**: python-dotenv 1.0
 
-### Peer Node
-- 🔲 Complete TCP implementation
-- 🔲 Concurrent connection management
-- 🔲 Message encryption
+### Infrastructure
+- **Container**: Docker Compose
+- **Database**: Redis 7 (Alpine)
+- **Build Tool**: Nx
+
+## Features
+
+✅ **Production-Ready Architecture**
+- Clean separation of concerns
+- Professional folder structure
+- Type-safe with full type hints
+- Environment-based configuration
+- Dependency injection
+
+✅ **Robust Storage**
+- Redis-only (persistent)
+- Connection health monitoring
+- Automatic reconnection handling
+- Proper error management
+
+✅ **Developer Experience**
+- Comprehensive API documentation
+- Automated tests
+- Clear code organization
+- Detailed README files
+- Example configurations
+
+✅ **Operational Excellence**
+- Structured logging
+- Health check endpoint
+- Docker Compose setup
+- Environment variables
+- Error handling
 
 ---
 
 **Project Status**: Phase 1 Complete ✅ | Current: Phase 2 ⏳
+
+**Last Updated**: Refactored to clean architecture with Redis-only storage

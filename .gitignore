@@ -30,6 +30,7 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .env
+.env.local
 .venv
 env/
 venv/
@@ -54,3 +55,6 @@ package-lock.json
 
 # Nx
 .nx/
+
+# Docker
+docker-compose.override.yml

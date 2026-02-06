@@ -36,28 +36,28 @@ def test_register(username: str, ip: str, port: int):
         "ip": ip,
         "port": port
     }
-    response = requests.post(f"{BASE_URL}/register", json=data)
+    response = requests.post(f"{BASE_URL}/api/v1/register", json=data)
     print_response(response, f"Register Peer: {username}")
     return response.status_code == 201
 
 
 def test_get_peers():
     """Test get peers list"""
-    response = requests.get(f"{BASE_URL}/peers")
+    response = requests.get(f"{BASE_URL}/api/v1/peers")
     print_response(response, "Peers List")
     return response.json() if response.status_code == 200 else None
 
 
 def test_get_peer_info(username: str):
     """Test get peer info"""
-    response = requests.get(f"{BASE_URL}/peerinfo", params={"username": username})
+    response = requests.get(f"{BASE_URL}/api/v1/peerinfo", params={"username": username})
     print_response(response, f"Peer Info: {username}")
     return response.json() if response.status_code == 200 else None
 
 
 def test_unregister(username: str):
     """Test unregister peer"""
-    response = requests.delete(f"{BASE_URL}/unregister/{username}")
+    response = requests.delete(f"{BASE_URL}/api/v1/unregister/{username}")
     print_response(response, f"Unregister Peer: {username}")
     return response.status_code == 200
 
@@ -73,7 +73,7 @@ def test_duplicate_registration():
     username = "duplicate_test"
     test_register(username, "192.168.1.50", 5050)
     # Try to register again
-    response = requests.post(f"{BASE_URL}/register", json={
+    response = requests.post(f"{BASE_URL}/api/v1/register", json={
         "username": username,
         "ip": "192.168.1.51",
         "port": 5051
@@ -84,7 +84,7 @@ def test_duplicate_registration():
 
 def test_nonexistent_peer():
     """Test getting info for non-existent peer"""
-    response = requests.get(f"{BASE_URL}/peerinfo", params={"username": "nonexistent_user"})
+    response = requests.get(f"{BASE_URL}/api/v1/peerinfo", params={"username": "nonexistent_user"})
     print_response(response, "Test Non-existent Peer (should fail)")
 
 

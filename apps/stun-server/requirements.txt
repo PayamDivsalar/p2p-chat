@@ -1,4 +1,9 @@
 fastapi==0.115.0
 uvicorn==0.32.0
 pydantic==2.9.0
+pydantic-settings==2.5.2
+redis==5.0.8
 requests==2.32.0  # For API testing
+python-dotenv==1.0.1
+redis==5.0.1  # Redis client
+python-dotenv==1.0.0  # Environment variables management

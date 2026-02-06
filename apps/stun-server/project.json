@@ -6,7 +6,8 @@
     "serve": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "python apps/stun-server/src/main.py"
+        "command": "cd apps/stun-server && python -m src.main",
+        "cwd": "."
       }
     }
   }
